@@ -22,9 +22,9 @@ AWS Credentials
 
 In order to manage AWS components, authentication credentials need to
 be available to the node. There are 2 way to handle this:
-1. Load credentials from data bag
-2. explicitly pass credentials parameter to the resource
-3. or let the resource pick up credentials from the IAM role assigned to the instance
+* Load credentials from data bag (support encrypted databag)
+* explicitly pass credentials parameter to the resource
+* or let the resource pick up credentials from the IAM role assigned to the instance
 
 
 Recipes
