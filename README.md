@@ -22,7 +22,7 @@ AWS Credentials
 
 In order to manage AWS components, authentication credentials need to
 be available to the node. There are 2 way to handle this:
-* Load credentials from data bag (support encrypted databag)
+* Load credentials from data bag (only support encrypted databag)
 * explicitly pass credentials parameter to the resource
 * or let the resource pick up credentials from the IAM role assigned to the instance
 
@@ -81,7 +81,7 @@ Attribute Parameters For Action Create:
   `/dev/sdi` but no default value, required. used when both create and attach action called in same recipe.
 * `volume_type` (optional) - "standard" or "io1" (io1 is the type for IOPS volume). Default was set to standard.
 * `iops` - number of Provisioned IOPS to provision, must be >= 100. Default was set to 0
-*`data_bag` (optional) - provide data bag and key details to load AWS credentials. eg: data_bag["NAME", "Key"] 
+* `data_bag` (optional) - provide data bag and key details to load AWS credentials. eg: data_bag["NAME", "Key"] 
 
 * Example of Volume create recipe
 
@@ -107,6 +107,24 @@ The below recipe will create a new volume with size 1G
 		size 1
  		action [ :create ]
 	end
+
+The below recipe will only the the given vloume id 
+	
+	aws_volume_ebs_volume "db_ebs_volume" do
+		volume_id "vol-d6af1dd3"
+		device "/dev/sdb"
+		action [ :attach ]
+	end
+
+The below recipe will take AWS access and secret key from data bag
+	
+	aws_volume_ebs_volume "db_ebs_volume" do
+		size 1
+		device "/dev/sda"
+		data_bag [ "EC2", "key" ]
+ 		action [ :create, :attach ]
+	end
+	
 
 Attribute Parameters For Action Attach:
 
