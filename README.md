@@ -87,26 +87,26 @@ Attribute Parameters For Action Create:
 
 The below recipe will create a new volume from snapshot_id 'snap-XXXX' and attached to the instance as '/dev/sdb'
 
-aws_volume_ebs_volume "db_ebs_volume" do
- 	snapshot_id "snap-XXXX"
- 	device "/dev/sdb"
- 	action [ :create, :attach ]
-end 
+	aws_volume_ebs_volume "db_ebs_volume" do
+ 		snapshot_id "snap-XXXX"
+ 		device "/dev/sdb"
+ 		action [ :create, :attach ]
+	end 
 
 The below recipe will create a new volume with size 1G and attached to the instance as '/dev/sda'
 
-aws_volume_ebs_volume "db_ebs_volume" do
-	size 1
-	device "/dev/sda"
- 	action [ :create, :attach ]
-end
+	aws_volume_ebs_volume "db_ebs_volume" do
+		size 1
+		device "/dev/sda"
+ 		action [ :create, :attach ]
+	end
 
 The below recipe will create a new volume with size 1G
 
-aws_volume_ebs_volume "db_ebs_volume" do
-	size 1
- 	action [ :create ]
-end
+	aws_volume_ebs_volume "db_ebs_volume" do
+		size 1
+ 		action [ :create ]
+	end
 
 Attribute Parameters For Action Attach:
 
