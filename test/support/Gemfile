@@ -1,0 +1,3 @@
+``` ruby Gemfile source httpsrubygems.org
+
+gem 'rake' gem 'foodcritic'
