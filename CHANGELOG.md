@@ -5,6 +5,14 @@ aws_volume CHANGELOG
 -----
 - [pradeep] - Initial release of aws_volume
 
+0.1.1
+-----
+- [pradeep] - Added encrypted data bag support
+
+0.1.2
+-----
+- [pradeep] - Fixed foodcritic issue FC002 and FC017
+
 - - -
 Check the [Markdown Syntax Guide](http://daringfireball.net/projects/markdown/syntax) for help with Markdown.
 
