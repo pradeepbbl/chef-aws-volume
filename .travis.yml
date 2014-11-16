@@ -1,6 +1,6 @@
 language: ruby
 bundler_args: --trace --without development
-script: "bundle exec rake Rakefile"
+script: "bundle exec rake foodcritic"
 rvm:
   - 1.9.3
 gemfile:
