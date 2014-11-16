@@ -34,7 +34,7 @@ module AWS
       			bag = new_resource.data_bag[0]
       			key = new_resource.data_bag[1]
 
-      			my_secret = Chef::EncryptedDataBagItem.load_secret("#{node['chef']['secretfile']}")
+      			my_secret = Chef::EncryptedDataBagItem.load_secret(node['chef']['secretfile'])
       			data_bag = Chef::EncryptedDataBagItem.load(bag, key, my_secret)
       			
       			aws_access_key = data_bag["aws_access_key"]
