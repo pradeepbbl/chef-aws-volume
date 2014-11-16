@@ -108,7 +108,7 @@ The below recipe will create a new volume with size 1G
  		action [ :create ]
 	end
 
-The below recipe will only the the given vloume id 
+The below recipe will only attach the the given vloume id 
 	
 	aws_volume_ebs_volume "db_ebs_volume" do
 		volume_id "vol-d6af1dd3"
