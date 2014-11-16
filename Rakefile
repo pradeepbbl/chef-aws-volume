@@ -1,4 +1,3 @@
-``` ruby Rakefile
 #!/usr/bin/env rake
 
 desc "Runs foodcritic linter"
