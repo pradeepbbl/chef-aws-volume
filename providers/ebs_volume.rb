@@ -13,6 +13,8 @@ action :create do
 		snapshot_id = nil
 		ec2Create(new_resource.size, new_resource.device, snapshot_id)
 	end
+	#Notify observers
+	new_resource.updated_by_last_action(true)
 end
 
 
@@ -34,6 +36,9 @@ action :attach do
 			raise "Volume attach failed ..!"
 		end
 	end
+	
+	#Notify observers
+	new_resource.updated_by_last_action(true)
 end
 
 # create volume 
