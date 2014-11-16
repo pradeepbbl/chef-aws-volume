@@ -1,6 +1,6 @@
 
-[![Gem Version](https://img.shields.io/gem/v/berkshelf.svg)][gem]
 [![Build Status](https://secure.travis-ci.org/unixworld/chef-aws-volume.png)](http://travis-ci.org/unixworld/chef-aws-volume)
+![Version](http://img.shields.io/badge/cookbook-0.1.2-blue.svg)
 
 Description
 ===========
