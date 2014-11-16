@@ -1,6 +1,6 @@
 language: ruby
-bundler_args: --without development
-script: "bundle exec rake build"
+bundler_args: --trace --without development
+script: "bundle exec rake Rakefile"
 rvm:
   - 1.9.3
 gemfile:
