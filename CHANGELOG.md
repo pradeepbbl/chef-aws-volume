@@ -13,6 +13,11 @@ aws_volume CHANGELOG
 -----
 - [pradeep] - Fixed foodcritic issue FC002 and FC017
 
+0.1.3
+-----
+- [pradeep] - Added Travis CI: Continuous Integration 
+
+
 - - -
 Check the [Markdown Syntax Guide](http://daringfireball.net/projects/markdown/syntax) for help with Markdown.
 
