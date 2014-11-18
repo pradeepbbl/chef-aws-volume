@@ -8,3 +8,4 @@ gemfile:
 branches:
   only:
     - master
+    - issue_04
