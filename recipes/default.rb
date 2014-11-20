@@ -10,3 +10,4 @@ chef_gem "aws-sdk" do
 end
 
 require 'aws-sdk'
+

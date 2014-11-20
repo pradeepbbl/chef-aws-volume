@@ -3,15 +3,15 @@ include AWS::Ec2
 require 'open-uri'
 
 action :create do	
-	# Check if sanpshot id present
+	# Check if snapshot id present
 	if new_resource.snapshot_id =~ /snap-*/
-		Chef::Log.debug "Featch snapshot_id #{new_resource.snapshot_id}"
+		Chef::Log.debug "Fetch snapshot_id #{new_resource.snapshot_id}"
 		snapshot_id = findSnapshot(new_resource.snapshot_id)
 		Chef::Log.debug "snapshot_id #{snapshot_id}"
-		ec2Create(new_resource.size, new_resource.device, new_resource.snapshot_id)
+		ec2Create(new_resource.size, new_resource.device, new_resource.volume_type, new_resource.snapshot_id)
 	else
 		snapshot_id = nil
-		ec2Create(new_resource.size, new_resource.device, snapshot_id)
+		ec2Create(new_resource.size, new_resource.device, new_resource.volume_type, snapshot_id)
 	end
 	#Notify observers
 	new_resource.updated_by_last_action(true)
@@ -29,7 +29,7 @@ action :attach do
 		Chef::Log.debug "Attach action called via :create or volume is empty"
 	else
 		attach = ec2Attach(volume, instances_id, device)
-		
+
 		if attach == "success"
 			Chef::Log.info "Volume with ID #{new_resource.volume_id} has been attached to Instance with ID #{instances_id}"
 		else
@@ -41,22 +41,19 @@ action :attach do
 	new_resource.updated_by_last_action(true)
 end
 
-# create volume 
-def ec2Create(size="", device="", snapshot="")
+# Volume create function 
+def ec2Create(size="", device="", volume_type="", snapshot="")
 	
 	# Get Instance ID and zone details
 	zone = getZone()
 	instances_id = getInstanceId()
 
 	if !snapshot.nil?
-		volume = ec2.volumes.create(:availability_zone => zone,
+		volume = ec2.volumes.create(:availability_zone => zone, :volume_type => volume_type,
 									:snapshot_id => snapshot)
 
-		unless volume.status == :available
-			sleep 1
-		end
-
-
+		sleep 1 until volume.status == :available
+		
 		action = new_resource.action
 		
 		if action.include?(:attach)
@@ -65,7 +62,6 @@ def ec2Create(size="", device="", snapshot="")
 			
 			if attachment == "success"
 				Chef::Log.info "Volume created in host #{instances_id} on zone #{zone} form snapshot #{snapshot} and attached to device #{device}"
-				Chef::Log.info "Attach obj #{attachment}"
 			else
 				raise "Error while attaching volume"
 			end
@@ -73,13 +69,10 @@ def ec2Create(size="", device="", snapshot="")
 			Chef::Log.info "Volume created in host #{instances_id} on zone #{zone} form snapshot #{snapshot}"
 		end
 	else
-		Chef::Log.debug "creating new volume line 30"
-		volume = ec2.volumes.create(:size => size,
+		volume = ec2.volumes.create(:size => size, :volume_type => volume_type,
 									:availability_zone => zone)
 
-		unless volume.status == :available
-			sleep 1
-		end
+	  sleep 1 until volume.status == :available	
 		
 		action = new_resource.action
 
@@ -97,10 +90,15 @@ def ec2Create(size="", device="", snapshot="")
 	end
 end
 
-# Attach volume
+#Volume attach function
 def ec2Attach(volume="", instances_id="", device="")
-	attach = volume.attach_to(ec2.instances[instances_id], device)
-	sleep 1 until attach.status != :attaching
-	Chef::Log.info "Device name in instance is #{attach.device}"
-	return "success"
+	unless device.nil?
+		Chef::Log.debug "Device not null!"
+		attach = volume.attach_to(ec2.instances[instances_id], device)
+		sleep 1 until attach.status != :attaching
+		return "success"
+	else
+		Chef::Log.error "Sorry can't attach volume without device, please pass device value in recipe!"
+		raise "Volume with empty device name can't attach, please pass device value in recipe! "
+	end
 end
