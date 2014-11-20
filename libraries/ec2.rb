@@ -29,8 +29,7 @@ module AWS
       				:region => region)
       		elsif new_resource.data_bag
       			Chef::Log.debug "Loading key from DataBag using secret file #{node['chef']['secretfile']}"
-      			Chef::Log.debug  "Check  #{new_resource.data_bag}"
-      			
+
       			bag = new_resource.data_bag[0]
       			key = new_resource.data_bag[1]
 
@@ -39,8 +38,6 @@ module AWS
       			
       			aws_access_key = data_bag["aws_access_key"]
       			aws_secret_key = data_bag["aws_secret_access_key"]
-      			
-      			Chef::Log.debug "AWS access key is #{aws_access_key} and secret key is #{aws_secret_key}"
 
       			AWS::EC2.new(
       				:access_key_id => aws_access_key,
@@ -53,7 +50,7 @@ module AWS
 
    		
 
-		# Get snapshot id
+		# Function to get snapshot id
 		def findSnapshot(vol_id="")
 			snapshot_id = nil
 			
