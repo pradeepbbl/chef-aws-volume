@@ -17,6 +17,10 @@ aws_volume CHANGELOG
 -----
 - [pradeep] - Added Travis CI: Continuous Integration 
 
+0.1.4
+-----
+- [pradeep] - Remove debug messages and minor bug fixes found during test.
+
 - - -
 Check the [Markdown Syntax Guide](http://daringfireball.net/projects/markdown/syntax) for help with Markdown.
 

@@ -1,6 +1,6 @@
 
 [![Build Status](https://secure.travis-ci.org/unixworld/chef-aws-volume.png)](http://travis-ci.org/unixworld/chef-aws-volume)
-[![Version](http://img.shields.io/badge/cookbook-0.1.3-blue.svg)](https://github.com/unixworld/chef-aws-volume)
+[![Version](http://img.shields.io/badge/cookbook-0.1.4-blue.svg)](https://github.com/unixworld/chef-aws-volume)
 
 Description
 ===========
