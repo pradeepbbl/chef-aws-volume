@@ -21,6 +21,10 @@ aws_volume CHANGELOG
 -----
 - [pradeep] - Remove debug messages and minor bug fixes found during test.
 
+0.1.5
+-----
+- [pradeep] - Added snapshot support.
+
 - - -
 Check the [Markdown Syntax Guide](http://daringfireball.net/projects/markdown/syntax) for help with Markdown.
 
