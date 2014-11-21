@@ -41,6 +41,17 @@ action :attach do
 	new_resource.updated_by_last_action(true)
 end
 
+action :snapshot do
+	# Take snapshot of given volume id.
+	success, snapshot_id = ec2TakeSanp(new_resource.dry_run, new_resource.volume_id, new_resource.description)
+
+	if success
+		Chef::Log.info "Volume with ID #{new_resource.volume_id} has been attached to Instance with ID #{instances_id}"
+	else
+		raise "Can't take Snapshot!"
+	end
+end
+
 # Volume create function 
 def ec2Create(size="", device="", volume_type="", snapshot="")
 	
@@ -90,7 +101,7 @@ def ec2Create(size="", device="", volume_type="", snapshot="")
 	end
 end
 
-#Volume attach function
+# Volume attach function
 def ec2Attach(volume="", instances_id="", device="")
 	unless device.nil?
 		Chef::Log.debug "Device not null!"
@@ -100,5 +111,20 @@ def ec2Attach(volume="", instances_id="", device="")
 	else
 		Chef::Log.error "Sorry can't attach volume without device, please pass device value in recipe!"
 		raise "Volume with empty device name can't attach, please pass device value in recipe! "
+	end
+end
+
+
+# Volume create snapshot function
+
+def ec2TakeSanp(dry_run="", volume="", description="")
+	unless volume.nil?
+		# Take snapshot of given volume ID
+		snapshot = ec2.create_snapshot(:dry_run => dry_run, :volume_id => volume, :description => description)
+		chef::Log.info snapshot.progress until snapshot.status != :done
+		return [true, snapshot.snapshot_id]
+	else
+		Chef::Log.error "Sorry can't create snapshot with empty volume_id, please pass volume_id value in recipe!"
+		raise "Sorry can't create snapshot with empty volume_id, please pass volume_id value in recipe!"
 	end
 end
