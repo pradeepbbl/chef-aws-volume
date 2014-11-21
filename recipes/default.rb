@@ -13,6 +13,7 @@ require 'aws-sdk'
 
 aws_volume_ebs_volume "db_ebs_volume" do
     volume_id "vol-7a595d7f"
+    description "Test snapshot"
     data_bag [ "EC2", "key" ]
     action [ :snapshot ]
 end

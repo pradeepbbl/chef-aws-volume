@@ -9,8 +9,7 @@ state_attrs :size,
 			:aws_secret_key,
 			:volume_id,
 			:data_bag,
-			:description,
-			:dry_run
+			:description
 
 attribute :size, :kind_of => Integer
 attribute :snapshot_id, :kind_of => String
@@ -22,7 +21,7 @@ attribute :volume_id, :kind_of => String
 attribute :iops, :kind_of => Integer, :default => 0
 attribute :data_bag, :kind_of => Array
 attribute :description, :kind_of => String
-attribute :dry_run, :kind_of => Boolean, :default => True
+
 
 def initialize(*args)
   super

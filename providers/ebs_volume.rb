@@ -43,13 +43,16 @@ end
 
 action :snapshot do
 	# Take snapshot of given volume id.
-	success, snapshot_id = ec2TakeSanp(new_resource.dry_run, new_resource.volume_id, new_resource.description)
+	success, snapshot_id = ec2TakeSanp(new_resource.volume_id, new_resource.description)
 
 	if success
 		Chef::Log.info "Volume with ID #{new_resource.volume_id} has been attached to Instance with ID #{instances_id}"
 	else
 		raise "Can't take Snapshot!"
 	end
+
+	#Notify observers
+	new_resource.updated_by_last_action(true)
 end
 
 # Volume create function 
@@ -117,12 +120,16 @@ end
 
 # Volume create snapshot function
 
-def ec2TakeSanp(dry_run="", volume="", description="")
-	unless volume.nil?
+def ec2TakeSanp(volume_id="", description="")
+	unless volume_id.nil?
 		# Take snapshot of given volume ID
-		snapshot = ec2.create_snapshot(:dry_run => dry_run, :volume_id => volume, :description => description)
-		chef::Log.info snapshot.progress until snapshot.status != :done
-		return [true, snapshot.snapshot_id]
+		Chef::Log.info "Inside ec2TakeSanp"
+		volume = ec2.volumes[volume_id]
+		Chef::Log.info "Got volume obj"
+		snapshot = volume.create_snapshot(description)
+		Chef::Log.info "Take snapshot"
+		Chef::Log.info snapshot.status until [:completed, :error].include?(snapshot.status)
+		return [true, snapshot.id]
 	else
 		Chef::Log.error "Sorry can't create snapshot with empty volume_id, please pass volume_id value in recipe!"
 		raise "Sorry can't create snapshot with empty volume_id, please pass volume_id value in recipe!"
