@@ -1,4 +1,4 @@
-actions :create, :attach, :snapshot
+actions :create, :attach, :snapshot, :delete_snapshot
 
 state_attrs :size,
 			:snapshot_id,

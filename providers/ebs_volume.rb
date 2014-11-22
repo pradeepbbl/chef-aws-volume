@@ -43,16 +43,32 @@ end
 
 action :snapshot do
 	# Take snapshot of given volume id.
-	success, snapshot_id = ec2TakeSanp(new_resource.volume_id, new_resource.description)
+	success, snapshot_msg = ec2TakeSanp(new_resource.volume_id, new_resource.description)
 
 	if success
-		Chef::Log.info "Volume with ID #{new_resource.volume_id} has been attached to Instance with ID #{instances_id}"
+		Chef::Log.info "Snapshot with ID #{snapshot_msg} has been created from volume ID #{new_resource.volume_id}"
 	else
-		raise "Can't take Snapshot!"
+		raise "Error occurred while taking snapshot of volume #{new_resource.volume_id} #{snapshot_msg}"
 	end
 
 	#Notify observers
 	new_resource.updated_by_last_action(true)
+end
+
+action :delete_snapshot do
+	# Delete the given snapshot id
+	snapshot_id = findSnapshot(new_resource.snapshot_id)
+
+	if snapshot_id
+		success, msg = ec2DeleteSnap(snapshot_id)
+		if success
+			Chef::Log.info "Snapshot with id #{snapshot_id} has been deleted successfully, request id was #{msg}"
+		else
+			raise "Error while deleting snapshot id #{snapshot_id}"
+		end
+	else
+		raise "Can't find snapshot #{new_resource.snapshot_id}!"
+	end
 end
 
 # Volume create function 
@@ -118,20 +134,37 @@ def ec2Attach(volume="", instances_id="", device="")
 end
 
 
-# Volume create snapshot function
-
+# Create snapshot function
 def ec2TakeSanp(volume_id="", description="")
 	unless volume_id.nil?
 		# Take snapshot of given volume ID
-		Chef::Log.info "Inside ec2TakeSanp"
 		volume = ec2.volumes[volume_id]
-		Chef::Log.info "Got volume obj"
-		snapshot = volume.create_snapshot(description)
-		Chef::Log.info "Take snapshot"
-		Chef::Log.info snapshot.status until [:completed, :error].include?(snapshot.status)
-		return [true, snapshot.id]
+
+		if [:deleting, :deleted, :error].include?(volume.status)
+			raise "Something wrong with the given volume #{new_resource.volume_id}, volume status is #{volume.status}"
+		else
+			snapshot = volume.create_snapshot(description)
+			sleep 1 until [:completed, :error].include?(snapshot.status)
+
+			if snapshot.status == :completed
+				return [true, snapshot.id]
+			else
+				return [false, snapshot.error]
+			end
+		end
 	else
 		Chef::Log.error "Sorry can't create snapshot with empty volume_id, please pass volume_id value in recipe!"
 		raise "Sorry can't create snapshot with empty volume_id, please pass volume_id value in recipe!"
+	end
+end
+
+# Remove snapshot function
+def ec2DeleteSnap(snap_id="")
+	unless snap_id.nil?
+		obj = ec2.client.delete_snapshot(:snapshot_id => snap_id)
+
+		return[obj.return, obj.request_id]
+	else
+		raise "Empty or invalid snapshot id!"
 	end
 end

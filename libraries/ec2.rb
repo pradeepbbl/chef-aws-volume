@@ -63,7 +63,8 @@ module AWS
 
 			raise "Cannot find snapshot id!" unless snapshot_id
 			Chef::Log.info("Snapshot ID is #{snapshot_id}")
-        	return snapshot_id
+      
+      return snapshot_id
 		end
 
 		# Get instance ID
