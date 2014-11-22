@@ -69,6 +69,9 @@ action :delete_snapshot do
 	else
 		raise "Can't find snapshot #{new_resource.snapshot_id}!"
 	end
+
+	#Notify observers
+	new_resource.updated_by_last_action(true)
 end
 
 # Volume create function 
