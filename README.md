@@ -72,10 +72,12 @@ Manage Elastic Block Store (EBS) volumes with this resource.
 
 Actions:
 
-* `create` - create a new volume.
-* `attach` - attach the specified volume.
+* `create` - Create a new volume.
+* `attach` - Attach the specified volume.
+* `snapshot` - Create a snapshot of specified volume.
+* `delete_snapshot` - Delete the specified snapshot id.
 
-Attribute Parameters For Action Create:
+Attribute Parameters For Action `create`:
 
 * `aws_secret_key`, `aws_access_key` (optional) - passed to
   `AWS:Ec2` to authenticate required, unless using IAM roles for authentication.
@@ -83,7 +85,7 @@ Attribute Parameters For Action Create:
 * `snapshot_id` (optional) - snapshot to build EBS volume from.
 * `device` (optional) - local block device to attach the volume to, e.g.
   `/dev/sdi` but no default value, required. used when both create and attach action called in same recipe.
-* `volume_type` (optional) - "standard" or "io1" (io1 is the type for IOPS volume). Default was set to standard.
+* `volume_type` (optional) - "standard", "io1" (io1 is the type for IOPS volume) or "gp2". Default was set to standard.
 * `iops` - number of Provisioned IOPS to provision, must be >= 100. Default was set to 0
 * `data_bag` (optional) - provide data bag and key details to load AWS credentials. eg: data_bag["NAME", "Key"] 
 
@@ -97,11 +99,12 @@ The below recipe will create a new volume from snapshot_id 'snap-XXXX' and attac
  		action [ :create, :attach ]
 	end 
 
-The below recipe will create a new volume with size 1G and attached to the instance as '/dev/sda'
+The below recipe will create a new gp2 volume with size 1G and attached to the instance as '/dev/sda'
 
 	aws_volume_ebs_volume "db_ebs_volume" do
 		size 1
 		device "/dev/sda"
+		volume_type "gp2"
  		action [ :create, :attach ]
 	end
 
@@ -112,13 +115,6 @@ The below recipe will create a new volume with size 1G
  		action [ :create ]
 	end
 
-The below recipe will only attach the the given vloume id 
-	
-	aws_volume_ebs_volume "db_ebs_volume" do
-		volume_id "vol-d6af1dd3"
-		device "/dev/sdb"
-		action [ :attach ]
-	end
 
 The below recipe will take AWS access and secret key from data bag
 	
@@ -128,20 +124,58 @@ The below recipe will take AWS access and secret key from data bag
 		data_bag [ "EC2", "key" ]
  		action [ :create, :attach ]
 	end
-	
 
-Attribute Parameters For Action Attach:
+Attribute Parameters For Action `attach`:
 
 * `aws_secret_key`, `aws_access_key` (optional) - passed to
   `AWS:Ec2` to authenticate required, unless using IAM roles for authentication
+* `data_bag` (optional) - provide data bag and key details to load AWS credentials. eg: data_bag["NAME", "Key"] 
 * `device` - local block device to attach the volume to, e.g. `/dev/sdi`
 * `volume_id` - ID of the volume which need to be attached.
 
-To Do:
+* Example of Volume attach recipe
 
-Integrate below action
+The below recipe will only attach the the given vloume id 
+	
+	aws_volume_ebs_volume "db_ebs_volume" do
+		volume_id "vol-XXXXXX"
+		device "/dev/sdb"
+		action [ :attach ]
+	end
 
-* `detach` - detach the specified volume.
-* `snapshot` - create a snapshot of the volume.
-* `prune` - prune snapshots.
+Attribute Parameters For Action `snapshot`:
 
+* `aws_secret_key`, `aws_access_key` (optional) - passed to
+  `AWS:Ec2` to authenticate required, unless using IAM roles for authentication
+* `data_bag` (optional) - provide data bag and key details to load AWS credentials. eg: data_bag["NAME", "Key"] 
+* `volume_id` - ID of the volume which need to be attached.
+* `description` - Description used to tag snapshot.
+
+
+The below recipe will create a snapshot of mentioned volume
+	
+	aws_volume_ebs_volume "db_ebs_volume" do
+    	volume_id "vol-XXXXXXX"
+    	description "Test snapshot"
+    	data_bag [ "EC2", "key" ]
+    	action [ :snapshot ]
+	end
+
+Attribute Parameters For Action `delete_snapshot`:
+
+* `aws_secret_key`, `aws_access_key` (optional) - passed to
+  `AWS:Ec2` to authenticate required, unless using IAM roles for authentication
+* `data_bag` (optional) - provide data bag and key details to load AWS credentials. eg: data_bag["NAME", "Key"] 
+* `snapshot_id` - snapshot id to delete.
+
+The below recipe will delete the mentioned snapshot
+	
+	aws_volume_ebs_volume "db_ebs_volume" do
+    	snapshot_id "snap-XXXXX"
+    	data_bag [ "EC2", "key" ]
+    	action [ :delete_snapshot ]
+	end
+
+
+
+Please raise issue/feature on github https://github.com/unixworld/chef-aws-volume/issues.

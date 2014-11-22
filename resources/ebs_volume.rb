@@ -1,4 +1,4 @@
-actions :create, :attach, :test
+actions :create, :attach, :snapshot, :delete_snapshot
 
 state_attrs :size,
 			:snapshot_id,
@@ -8,7 +8,8 @@ state_attrs :size,
 			:aws_access_key,
 			:aws_secret_key,
 			:volume_id,
-			:data_bag
+			:data_bag,
+			:description
 
 attribute :size, :kind_of => Integer
 attribute :snapshot_id, :kind_of => String
@@ -19,6 +20,8 @@ attribute :volume_type, :kind_of => String, :default => 'standard'
 attribute :volume_id, :kind_of => String
 attribute :iops, :kind_of => Integer, :default => 0
 attribute :data_bag, :kind_of => Array
+attribute :description, :kind_of => String
+
 
 def initialize(*args)
   super
